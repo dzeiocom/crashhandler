@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Error Activity Translations -->
+    <string name="error_app_crash">An Error Occurred in the application forcing it to close down</string>
+    <string name="error_app_report">Please report it so we can enhance you\'re Android OpenHealth experience</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="quit">Quit</string>
+    <string name="error_reporter_crash">An error occurred while making the error report</string>
+
+</resources>

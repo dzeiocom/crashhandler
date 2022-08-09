@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <!-- Add activity to main manifest -->
+        <activity android:name=".ui.ErrorActivity"
+            android:theme="@style/Theme.Material3.DynamicColors.DayNight"
+            android:exported="false" />
+
+    </application>
+
+
+</manifest>

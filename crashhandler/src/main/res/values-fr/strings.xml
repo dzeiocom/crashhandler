@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Error Activity Translations -->
+    <string name="error_app_crash">Une Erreur est survenu lors de l\'utilisation de l\'application</string>
+    <string name="error_app_report">Merci d\'envoyer le rapport d\'erreur afin que nous puissions améliorer votre experience</string>
+    <string name="copy_to_clipboard">Copier dans le presse papier</string>
+    <string name="quit">Quitter</string>
+    <string name="error_reporter_crash">Erreur lors de la géneration d\'un rapport d\'erreur</string>
+</resources>
