@@ -5,24 +5,26 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.dzeio.crashhandler.databinding.ActivityErrorBinding
+import com.dzeio.crashhandler.databinding.CrashHandlerActivityErrorBinding
 
 class ErrorActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityErrorBinding
+    private lateinit var binding: CrashHandlerActivityErrorBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityErrorBinding.inflate(layoutInflater)
+        binding = CrashHandlerActivityErrorBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
         val data = intent.getStringExtra("error")
 
         // put it in the textView
-        binding.errorText.text = data
-        binding.errorText.setTextIsSelectable(true)
+        binding.errorText.apply {
+            text = data
+            setTextIsSelectable(true)
+        }
 
         // Handle the Quit button
         binding.errorQuit.setOnClickListener {

@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Crash Handler"
 
 include ':sample'
-include ':crashhandler'
+include ':library'

@@ -39,8 +39,8 @@ android {
 
 dependencies {
 
-    implementation(project(":crashhandler"))
-
+    implementation(project(":library"))
+    
     // Material Design
     implementation("com.google.android.material:material:1.6.1")
 

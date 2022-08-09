@@ -1,6 +1,7 @@
 package com.dzeio.crashhandler
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -17,13 +18,14 @@ import kotlin.system.exitProcess
  * the Crash Handler class, you can get an instance by using it's [Builder]
  */
 class CrashHandler private constructor(
-    private val activity: Any,
+    private val application: Application?,
+    private val activity: Class<*>,
     private val prefs: SharedPreferences?,
     private val prefsKey: String?,
     @StringRes
     private val errorReporterCrashKey: Int?,
-    private var prefix: String? = null,
-    private var suffix: String? = null
+    private val prefix: String? = null,
+    private val suffix: String? = null
 ) {
 
     private companion object {
@@ -34,10 +36,11 @@ class CrashHandler private constructor(
      * Builder for the crash handler
      */
     class Builder() {
+        private var application: Application? = null
         private var prefs: SharedPreferences? = null
         private var prefsKey: String? = null
         private var errorReporterCrashKey: Int? = null
-        private var activity: Any? = ErrorActivity::class.java
+        private var activity: Class<*>? = ErrorActivity::class.java
         private var prefix: String? = null
         private var suffix: String? = null
 
@@ -48,7 +51,19 @@ class CrashHandler private constructor(
          *
          * @param activity the activity class to use
          */
-        fun withActivity(activity: Any): Builder {
+        fun withContext(context: Context): Builder {
+            this.application = context.applicationContext as Application?
+            return this
+        }
+
+        /**
+         * Change the Crash activity to with your own
+         *
+         * note: you can get the backtrace text by using `intent.getStringExtra("error")`
+         *
+         * @param activity the activity class to use
+         */
+        fun withActivity(activity: Class<*>): Builder {
             this.activity = activity
             return this
         }
@@ -114,7 +129,24 @@ class CrashHandler private constructor(
          * build the Crash Handler
          */
         fun build(): CrashHandler {
-            return CrashHandler(activity!!, prefs, prefsKey, errorReporterCrashKey, prefix, suffix)
+            return CrashHandler(application, activity!!, prefs, prefsKey, errorReporterCrashKey, prefix, suffix)
+        }
+    }
+
+    private var oldHandler:  Thread.UncaughtExceptionHandler? = null
+
+    fun setup() {
+        if (application != null) {
+            this.setup(application)
+        }
+    }
+
+    /**
+     * Destroy the handler
+     */
+    fun destroy() {
+        if (oldHandler != null) {
+            Thread.setDefaultUncaughtExceptionHandler(oldHandler)
         }
     }
 
@@ -126,7 +158,7 @@ class CrashHandler private constructor(
      */
     fun setup(application: Application) {
         // Application Error Handling
-        val oldHandler = Thread.getDefaultUncaughtExceptionHandler()
+        oldHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { paramThread, paramThrowable ->
 
             // Log error to logcat if it wasn't done before has it can not be logged depending on the version
@@ -199,13 +231,13 @@ class CrashHandler private constructor(
 
             data += suffix ?: ""
 
-            Log.i(TAG, "Starting ${(activity as Class<*>).name}")
+            Log.i(TAG, "Starting ${activity.name}")
 
             // prepare the activity
-            val intent = Intent(application.applicationContext, activity)
+            val intent = Intent(application, activity)
 
             // add flags so that it don't use the current Application context
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
             // add the Data String
             intent.putExtra("error", data)
