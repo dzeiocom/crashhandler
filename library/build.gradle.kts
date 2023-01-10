@@ -24,7 +24,7 @@ publishing {
 }
 
 android {
-    namespace = "com.dzeio.crashhandler"
+    namespace = "${group}.${artifact}"
     compileSdk = 33
     buildToolsVersion = "33.0.0"
 
