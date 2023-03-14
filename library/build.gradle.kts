@@ -76,5 +76,5 @@ android {
 
 dependencies {
     // Necessary for the Activity (well to make it pretty :D)
-    implementation("com.google.android.material:material:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
 }

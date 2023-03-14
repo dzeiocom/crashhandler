@@ -9,15 +9,10 @@ import android.os.Process
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import com.dzeio.crashhandlertest.Application
 import com.dzeio.crashhandlertest.databinding.ActivityErrorBinding
 import kotlin.system.exitProcess
 
 class ErrorActivity : AppCompatActivity() {
-
-    companion object {
-        const val TAG = "${Application.TAG}/ErrorActivity"
-    }
 
     private lateinit var binding: ActivityErrorBinding
 
@@ -31,7 +26,12 @@ class ErrorActivity : AppCompatActivity() {
         val data = intent.getStringExtra("error")
 
         // Get Application datas
-        val deviceToReport = if (Build.DEVICE.contains(Build.MANUFACTURER)) Build.DEVICE else "${Build.MANUFACTURER} ${Build.DEVICE}"
+        val deviceToReport =
+            if (Build.DEVICE.contains(Build.MANUFACTURER)) {
+                Build.DEVICE
+            } else {
+                "${Build.MANUFACTURER} ${Build.DEVICE}"
+            }
 
         val reportText = """
             Crash Report (Thread: ${intent?.getLongExtra("threadId", -1) ?: "unknown"})
@@ -52,11 +52,9 @@ class ErrorActivity : AppCompatActivity() {
 
         // Handle the Email Button
         binding.errorSubmitEmail.setOnClickListener {
-
             // Create Intent
             val intent = Intent(Intent.ACTION_SEND)
-            intent.data = Uri.parse("mailto:")
-            intent.type = "text/plain"
+            intent.setDataAndType(Uri.parse("mailto:"), "text/plain")
             intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("report.openhealth@dzeio.com"))
             intent.putExtra(Intent.EXTRA_SUBJECT, "Error report for application crash")
             intent.putExtra(Intent.EXTRA_TEXT, "Send Report Email\n$reportText")
@@ -70,7 +68,6 @@ class ErrorActivity : AppCompatActivity() {
 
         // Handle the GitHub Button
         binding.errorSubmitGithub.setOnClickListener {
-
             // Build URL
             val url = "https://github.com/dzeiocom/OpenHealth/issues/new?title=Application Error&body=$reportText"
 

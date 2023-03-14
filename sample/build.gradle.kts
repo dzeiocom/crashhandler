@@ -20,7 +20,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -31,7 +34,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    
+
     buildFeatures {
         viewBinding = true
     }
@@ -40,10 +43,13 @@ android {
 dependencies {
 
     implementation(project(":library"))
-    
+
     // Material Design
-    implementation("com.google.android.material:material:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
 
     // Navigation because I don't want to maintain basic transactions and shit
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+
+    // preferences
+    implementation("androidx.preference:preference-ktx:1.2.0")
 }
