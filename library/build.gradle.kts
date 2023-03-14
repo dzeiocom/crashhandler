@@ -24,7 +24,7 @@ publishing {
 }
 
 android {
-    namespace = "${group}.${artifact}"
+    namespace = "$group.$artifact"
     compileSdk = 33
     buildToolsVersion = "33.0.0"
 
@@ -34,7 +34,6 @@ android {
         aarMetadata {
             minCompileSdk = 21
         }
-
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -77,5 +76,5 @@ android {
 
 dependencies {
     // Necessary for the Activity (well to make it pretty :D)
-    implementation("com.google.android.material:material:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
 }
