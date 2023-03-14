@@ -218,7 +218,7 @@ class CrashHandler private constructor(
                 }
 
                 // update the store
-                prefs.edit().putLong(prefsKey, now).apply()
+                prefs.edit().putLong(prefsKey, now).commit()
             }
 
             Log.i(TAG, "Collecting Error")
