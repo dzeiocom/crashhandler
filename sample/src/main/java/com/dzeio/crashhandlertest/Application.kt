@@ -19,8 +19,4 @@ class Application : android.app.Application() {
             .withSuffix("WHYYYYY")
             .build().setup()
     }
-
-    companion object {
-        const val TAG = "CrashHandlerTest"
-    }
 }
