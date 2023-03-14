@@ -48,5 +48,9 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
 
     // Navigation because I don't want to maintain basic transactions and shit
+
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+
+    // preferences
+    implementation("androidx.preference:preference-ktx:1.2.0")
 }
