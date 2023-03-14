@@ -35,7 +35,7 @@ class CrashHandler private constructor(
     /**
      * Builder for the crash handler
      */
-    class Builder() {
+    class Builder {
         private var application: Application? = null
         private var prefs: SharedPreferences? = null
         private var prefsKey: String? = null
@@ -49,7 +49,7 @@ class CrashHandler private constructor(
          *
          * note: you can get the backtrace text by using `intent.getStringExtra("error")`
          *
-         * @param activity the activity class to use
+         * @param context the context class to use
          */
         fun withContext(context: Context): Builder {
             this.application = context.applicationContext as Application?
@@ -79,7 +79,6 @@ class CrashHandler private constructor(
             this.prefs = prefs
             return this
         }
-
 
         /**
          * the key of the [SharedPreferences] you want to let the library handle
@@ -129,11 +128,19 @@ class CrashHandler private constructor(
          * build the Crash Handler
          */
         fun build(): CrashHandler {
-            return CrashHandler(application, activity!!, prefs, prefsKey, errorReporterCrashKey, prefix, suffix)
+            return CrashHandler(
+                application,
+                activity!!,
+                prefs,
+                prefsKey,
+                errorReporterCrashKey,
+                prefix,
+                suffix
+            )
         }
     }
 
-    private var oldHandler:  Thread.UncaughtExceptionHandler? = null
+    private var oldHandler: Thread.UncaughtExceptionHandler? = null
 
     fun setup() {
         if (application != null) {
@@ -180,16 +187,19 @@ class CrashHandler private constructor(
 
             // add device informations
             val deviceToReport =
-                if (Build.DEVICE.contains(Build.MANUFACTURER)) Build.DEVICE else "${Build.MANUFACTURER} ${Build.DEVICE}"
-            data += "\n\non $deviceToReport (${Build.MODEL}) running Android ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})"
+                if (Build.DEVICE.contains(Build.MANUFACTURER)) {
+                    Build.DEVICE
+                } else {
+                    "${Build.MANUFACTURER} ${Build.DEVICE}"
+                }
 
+            data += "\n\non $deviceToReport (${Build.MODEL}) running Android ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})"
 
             // add the current time to it
             data += "\n\nCrash happened at ${Date(now)}"
 
             // if lib as access to the preferences store
             if (prefs != null && prefsKey != null) {
-
                 // get the last Crash
                 val lastCrash = prefs.getLong(prefsKey, 0L)
 
@@ -198,7 +208,6 @@ class CrashHandler private constructor(
 
                 // if a crash already happened just before it means the Error Activity crashed lul
                 if (lastCrash >= now - 1000) {
-
                     // log it :D
                     Log.e(
                         TAG,
@@ -237,7 +246,12 @@ class CrashHandler private constructor(
             val intent = Intent(application, activity)
 
             // add flags so that it don't use the current Application context
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+            )
 
             // add the Data String
             intent.putExtra("error", data)
@@ -251,6 +265,4 @@ class CrashHandler private constructor(
             exitProcess(10)
         }
     }
-
-
 }
