@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
@@ -12,7 +11,8 @@
         style="?textAppearanceHeadline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="blablabla"
+        android:textAlignment="center"
+        android:text="@string/crash_handler_page_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +22,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="blablabla2"
+        android:textAlignment="center"
+        android:text="@string/crash_handler_page_subtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -42,7 +43,8 @@
             android:id="@+id/error_text"
             android:layout_width="match_parent"
             style="?textAppearanceCaption"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true" />
 
     </ScrollView>
 
@@ -52,7 +54,7 @@
         android:id="@+id/error_submit_github"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Github"
+        android:text="@string/github"
         android:layout_marginStart="16dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/error_submit_email"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="E-Mail"
+        android:text="@string/e_mail"
         app:layout_constraintBottom_toTopOf="@+id/error_quit"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -72,7 +74,7 @@
         android:id="@+id/error_quit"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:text="Quit"
+        android:text="@string/quit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
