@@ -1,3 +1,7 @@
+<p align="center">
+  <img alt="Dzeio Charts logo" width="30%" src="sample/src/main/ic_launcher-playstore.png">
+</p>
+
 # Crash Handler
 
 Lightweight & customizable crash android crash handler library
@@ -7,8 +11,36 @@ Lightweight & customizable crash android crash handler library
 - Add Jitpack.io to your `settings.gradle` file `maven { url 'https://jitpack.io' }`
 
 Add to you dependencies (check the latest release for the version):
-- (Gradle Kotlin DSL) Add `implementation("com.dzeio:crashhandler:1.0.0")` 
-- (Gradle Groovy DSL) Add `implementation "com.dzeio:crashhandler:1.0.0" `
+- (Gradle Kotlin DSL) Add `implementation("com.dzeio:crashhandler:1.0.2")` 
+- (Gradle Groovy DSL) Add `implementation "com.dzeio:crashhandler:1.0.2" `
+
+## Usage
+
+_note: full featured example in the `sample` app_
+
+Create and add this to your Application.{kt,java}
+
+```kotlin
+CrashHandler.Builder()
+	// need the application context to run
+	.withContext(this)
+	// every other items below are optionnal
+	// define a custom activity to use
+	.withActivity(ErrorActivity::class.java)
+
+	// define the preferenceManager to be able to handle crash in a custom Activity and to have the previous crash date in the logs
+	.withPrefs(prefs)
+	.withPrefsKey("com.dzeio.crashhandler.key")
+
+	// a Prefix to add at the beggining the crash message
+	.withPrefix("Pouet :D")
+
+	// a Suffic to add at the end of the crash message
+	.withSuffix("WHYYYYY")
+
+	// build & start the module
+	.build().setup()
+```
 
 ## Build
 
