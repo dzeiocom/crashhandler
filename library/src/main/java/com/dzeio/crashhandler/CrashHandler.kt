@@ -181,7 +181,7 @@ class CrashHandler private constructor(
             val now = Date().time
 
             // prepare to build debug string
-            var data = "Crash report:\n\n"
+            var data = "${application.getString(R.string.crash_handler_crash_report)}\n\n"
 
             data += prefix ?: ""
 
@@ -193,10 +193,19 @@ class CrashHandler private constructor(
                     "${Build.MANUFACTURER} ${Build.DEVICE}"
                 }
 
-            data += "\n\non $deviceToReport (${Build.MODEL}) running Android ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})"
+            data += "\n\n${application.getString(
+                R.string.crash_handler_hard_soft_infos,
+                deviceToReport,
+                Build.MODEL,
+                Build.VERSION.RELEASE,
+                Build.VERSION.SDK_INT
+            )}"
 
             // add the current time to it
-            data += "\n\nCrash happened at ${Date(now)}"
+            data += "\n\n${application.getString(
+                R.string.crash_handler_crash_happened,
+                Date(now).toString()
+            )}"
 
             // if lib as access to the preferences store
             if (prefs != null && prefsKey != null) {
@@ -204,7 +213,10 @@ class CrashHandler private constructor(
                 val lastCrash = prefs.getLong(prefsKey, 0L)
 
                 // then add it to the logs :D
-                data += "\nLast crash happened at ${Date(lastCrash)}"
+                data += "\n${application.getString(
+                    R.string.crash_handler_previous_crash,
+                    Date(lastCrash).toString()
+                )}"
 
                 // if a crash already happened just before it means the Error Activity crashed lul
                 if (lastCrash >= now - 1000) {
@@ -217,7 +229,7 @@ class CrashHandler private constructor(
                     // try to send a toast indicating it
                     Toast.makeText(
                         application,
-                        errorReporterCrashKey ?: R.string.error_reporter_crash,
+                        errorReporterCrashKey ?: R.string.crash_handler_reporter_crash,
                         Toast.LENGTH_LONG
                     ).show()
 
@@ -233,10 +245,14 @@ class CrashHandler private constructor(
             Log.i(TAG, "Collecting Error")
 
             // get Thread name and ID
-            data += "\n\nHappened on Thread \"${paramThread.name}\" (${paramThread.id})"
+            data += "\n\n${application.getString(
+                R.string.crash_handler_thread_infos,
+                paramThread.name,
+                paramThread.id
+            )}"
 
             // print exception backtrace
-            data += "\n\nException:\n${paramThrowable.stackTraceToString()}\n\n"
+            data += "\n\n${application.getString(R.string.crash_handler_error)}\n${paramThrowable.stackTraceToString()}\n\n"
 
             data += suffix ?: ""
 
