@@ -3,8 +3,12 @@ package com.dzeio.crashhandlertest.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.dzeio.crashhandlertest.R
 import com.dzeio.crashhandlertest.databinding.ActivityMainBinding
 
+/**
+ *
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -15,5 +19,10 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.buttonFirst.setOnClickListener {
+            // DIE
+            throw Exception(getString(R.string.error_message))
+        }
     }
 }
