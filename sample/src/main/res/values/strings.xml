@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name" translatable="false">Crash Handler</string>
-    <string name="crash_app" translatable="false">Crash app</string>
-    <string name="error_message" translatable="false">I am an error</string>
-    <string name="crash_handler_page_title" translatable="false">Crash Handler page title</string>
-    <string name="crash_handler_page_subtitle" translatable="false">crash handler page subtitle</string>
+    <string name="crash_app">Crash app</string>
+    <string name="error_message">I am an error</string>
+    <string name="crash_handler_page_title">Crash Handler page title</string>
+    <string name="crash_handler_page_subtitle">crash handler page subtitle</string>
     <string name="github" translatable="false">Github</string>
-    <string name="e_mail" translatable="false">E-Mail</string>
-    <string name="quit" translatable="false">Quit</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="quit">Quit</string>
+    <string name="no_email_client_found">No E-Mail client found!</string>
+    <string name="send_email_report">Send a Report E-Mail</string>
+    <string name="error_report_application_crash">Error report for the application crash</string>
 </resources>

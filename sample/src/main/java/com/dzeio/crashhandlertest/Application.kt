@@ -22,10 +22,10 @@ class Application : android.app.Application() {
             .withPrefsKey("com.dzeio.crashhandler.key")
             // a Prefix to add at the beginning the crash message
             .withPrefix(
-                "POKEMON"
+                "Pokémon"
             )
             // a Suffix to add at the end of the crash message
-            .withSuffix("WHYYYYY")
+            .withSuffix("Suffix")
             // build & start the module
             .build().setup()
     }

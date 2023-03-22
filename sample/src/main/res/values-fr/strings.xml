@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="crash_app">Faire Planter l\'application</string>
+    <string name="error_message">Je suis une erreur</string>
+    <string name="crash_handler_page_title">Crash Handler Titre de page</string>
+    <string name="crash_handler_page_subtitle">Crash Handler sous-titre de page</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="quit">Quitter</string>
+    <string name="no_email_client_found">Aucun client E-Mail trouvé!</string>
+    <string name="send_email_report">Envoyer le rapport de crash par E-Mail</string>
+    <string name="error_report_application_crash">Rapport d\'erreur pour le crash d\'application</string>
+</resources>

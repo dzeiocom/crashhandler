@@ -8,6 +8,7 @@ import android.os.Process
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.dzeio.crashhandlertest.R
 import com.dzeio.crashhandlertest.databinding.ActivityErrorBinding
 import kotlin.system.exitProcess
 
@@ -48,14 +49,26 @@ class ErrorActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SEND)
             intent.setDataAndType(Uri.parse("mailto:"), "text/plain")
             intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("report.openhealth@dzeio.com"))
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Error report for application crash")
-            intent.putExtra(Intent.EXTRA_TEXT, "Send Report Email\n$data")
+            intent.putExtra(
+                Intent.EXTRA_SUBJECT,
+                getString(R.string.error_report_application_crash)
+            )
+            intent.putExtra(Intent.EXTRA_TEXT, "${getString(R.string.send_email_report)}\n$data")
 
             // send intent
             try {
-                startActivity(Intent.createChooser(intent, "Send Report Email..."))
+                startActivity(
+                    Intent.createChooser(
+                        intent,
+                        getString(R.string.send_email_report)
+                    )
+                )
             } catch (e: ActivityNotFoundException) {
-                Toast.makeText(this, "Not Email client found :(", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.no_email_client_found),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 
