@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name" translatable="false">Crash Handler</string>
-    <string name="title_activity_main" translatable="false">MainActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label" translatable="false">First Fragment</string>
-    <string name="second_fragment_label" translatable="false">Second Fragment</string>
-
     <string name="crash_app" translatable="false">Crash app</string>
+    <string name="error_message" translatable="false">I am an error</string>
+    <string name="crash_handler_page_title" translatable="false">Crash Handler page title</string>
+    <string name="crash_handler_page_subtitle" translatable="false">crash handler page subtitle</string>
+    <string name="github" translatable="false">Github</string>
+    <string name="e_mail" translatable="false">E-Mail</string>
+    <string name="quit" translatable="false">Quit</string>
 </resources>

@@ -3,7 +3,6 @@ package com.dzeio.crashhandlertest.ui
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.widget.Toast
@@ -12,37 +11,30 @@ import androidx.core.view.WindowCompat
 import com.dzeio.crashhandlertest.databinding.ActivityErrorBinding
 import kotlin.system.exitProcess
 
+/**
+ * Example Activity for a custom ErrorActivity
+ *
+ * note: try to keep the complexity of this class as low as possible
+ * to make sure this will always load
+ */
 class ErrorActivity : AppCompatActivity() {
 
+    // the view binding
     private lateinit var binding: ActivityErrorBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
+        // inflate the view
         binding = ActivityErrorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // get the error string from the library
         val data = intent.getStringExtra("error")
 
-        // Get Application datas
-        val deviceToReport =
-            if (Build.DEVICE.contains(Build.MANUFACTURER)) {
-                Build.DEVICE
-            } else {
-                "${Build.MANUFACTURER} ${Build.DEVICE}"
-            }
-
-        val reportText = """
-            Crash Report (Thread: ${intent?.getLongExtra("threadId", -1) ?: "unknown"})
-            on $deviceToReport (${Build.MODEL}) running Android ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})
-            
-            backtrace:
-            
-        """.trimIndent() + data
-
         // put it in the textView
-        binding.errorText.text = reportText
+        binding.errorText.text = data
 
         // Handle the Quit button
         binding.errorQuit.setOnClickListener {
@@ -57,8 +49,9 @@ class ErrorActivity : AppCompatActivity() {
             intent.setDataAndType(Uri.parse("mailto:"), "text/plain")
             intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("report.openhealth@dzeio.com"))
             intent.putExtra(Intent.EXTRA_SUBJECT, "Error report for application crash")
-            intent.putExtra(Intent.EXTRA_TEXT, "Send Report Email\n$reportText")
+            intent.putExtra(Intent.EXTRA_TEXT, "Send Report Email\n$data")
 
+            // send intent
             try {
                 startActivity(Intent.createChooser(intent, "Send Report Email..."))
             } catch (e: ActivityNotFoundException) {
@@ -69,8 +62,10 @@ class ErrorActivity : AppCompatActivity() {
         // Handle the GitHub Button
         binding.errorSubmitGithub.setOnClickListener {
             // Build URL
-            val url = "https://github.com/dzeiocom/OpenHealth/issues/new?title=Application Error&body=$reportText"
+            val title = "Application Error"
+            val url = "https://github.com/dzeiocom/OpenHealth/issues/new?title=$title&body=$data"
 
+            // send intent
             try {
                 startActivity(
                     Intent(Intent.ACTION_VIEW, Uri.parse(url))
