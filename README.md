@@ -2,6 +2,18 @@
   <img alt="Dzeio Charts logo" width="30%" src="sample/src/main/ic_launcher-playstore.png">
 </p>
 
+<p align="center">
+  <a href="https://discord.gg/d3QeWKBmBD">
+	<img src="https://img.shields.io/discord/1143555541004726272?color=%235865F2&label=Discord" alt="Discord Link">
+  </a>
+  <a href="https://github.com/dzeiocom/crashhandler/stargazers">
+  	<img src="https://img.shields.io/github/stars/dzeiocom/crashhandler?style=flat-square" alt="Github stars">
+  </a>
+  <a href="https://github.com/dzeiocom/crashhandler/actions/workflows/build.yml">
+  	<img src="https://img.shields.io/github/actions/workflow/status/dzeiocom/crashhandler/build.yml?style=flat-square" alt="Build passing" />
+  </a>
+</p>
+
 # Crash Handler
 
 Lightweight & customizable crash android crash handler library
