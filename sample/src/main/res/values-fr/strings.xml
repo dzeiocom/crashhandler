@@ -9,4 +9,7 @@
     <string name="no_email_client_found">Aucun client E-Mail trouvé!</string>
     <string name="send_email_report">Envoyer le rapport de crash par E-Mail</string>
     <string name="error_report_application_crash">Rapport d\'erreur pour le crash d\'application</string>
+    <string name="export_logs">Exporter les logs de crash sauvegardé</string>
+    <string name="export_complete">Logs de crash exporté!</string>
+    <string name="clear_export_logs">Nettoyer les crashs sauvegardé</string>
 </resources>

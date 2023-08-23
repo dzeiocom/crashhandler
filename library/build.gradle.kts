@@ -6,7 +6,7 @@ plugins {
 
 val artifact = "crashhandler"
 group = "com.dzeio"
-val projectVersion = project.findProperty("version") as String? ?: "1.0.0"
+val projectVersion = project.findProperty("version") as String? ?: "1.1.0"
 version = projectVersion
 
 publishing {
@@ -37,6 +37,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "VERSION", "\"$projectVersion\"")
     }
 
     testFixtures {

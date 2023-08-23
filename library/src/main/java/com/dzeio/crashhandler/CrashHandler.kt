@@ -1,5 +1,6 @@
 package com.dzeio.crashhandler
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -9,10 +10,16 @@ import android.os.Process
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.content.edit
 import com.dzeio.crashhandler.CrashHandler.Builder
 import com.dzeio.crashhandler.ui.ErrorActivity
+import com.dzeio.crashhandler.utils.ZipFile
+import java.io.File
+import java.io.IOException
+import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.Date
-import kotlin.system.exitProcess
+import java.util.TimeZone
 
 /**
  * the Crash Handler class, you can get an instance by using it's [Builder]
@@ -25,11 +32,24 @@ class CrashHandler private constructor(
     @StringRes
     private val errorReporterCrashKey: Int?,
     private val prefix: String? = null,
-    private val suffix: String? = null
+    private val suffix: String? = null,
+    private val exportFolder: File? = null
 ) {
 
-    private companion object {
+    companion object {
         private const val TAG = "CrashHandler"
+        private var instance: CrashHandler? = null
+
+        /**
+         * get the instance of the CrashHandler it will crash if it was not initialized previously
+         */
+        fun getInstance(): CrashHandler {
+            if (this.instance == null) {
+                throw Exception("can't get CrashHandler instance as its not initialized")
+            }
+
+            return this.instance!!
+        }
     }
 
     /**
@@ -43,6 +63,7 @@ class CrashHandler private constructor(
         private var activity: Class<*>? = ErrorActivity::class.java
         private var prefix: String? = null
         private var suffix: String? = null
+        private var exportLocation: File? = null
 
         /**
          * Change the Crash activity to with your own
@@ -125,6 +146,16 @@ class CrashHandler private constructor(
         }
 
         /**
+         * Add a crash log export folder
+         *
+         * @param exportLocation the folder in which you want to export crash logs, it will be created if it does not exists
+         */
+        fun withExportLocation(exportLocation: File): Builder {
+            this.exportLocation = exportLocation
+            return this
+        }
+
+        /**
          * build the Crash Handler
          */
         fun build(): CrashHandler {
@@ -135,9 +166,14 @@ class CrashHandler private constructor(
                 prefsKey,
                 errorReporterCrashKey,
                 prefix,
-                suffix
+                suffix,
+                exportLocation
             )
         }
+    }
+
+    init {
+        instance = this
     }
 
     private var oldHandler: Thread.UncaughtExceptionHandler? = null
@@ -179,47 +215,15 @@ class CrashHandler private constructor(
 
             // get current time an date
             val now = Date().time
-
-            // prepare to build debug string
-            var data = "${application.getString(R.string.crash_handler_crash_report)}\n\n"
-
-            data += prefix ?: ""
-
-            // add device informations
-            val deviceToReport =
-                if (Build.DEVICE.contains(Build.MANUFACTURER)) {
-                    Build.DEVICE
-                } else {
-                    "${Build.MANUFACTURER} ${Build.DEVICE}"
-                }
-
-            data += "\n\n${application.getString(
-                R.string.crash_handler_hard_soft_infos,
-                deviceToReport,
-                Build.MODEL,
-                Build.VERSION.RELEASE,
-                Build.VERSION.SDK_INT
-            )}"
-
-            // add the current time to it
-            data += "\n\n${application.getString(
-                R.string.crash_handler_crash_happened,
-                Date(now).toString()
-            )}"
+            var previousCrash: Long? = null
 
             // if lib as access to the preferences store
             if (prefs != null && prefsKey != null) {
                 // get the last Crash
-                val lastCrash = prefs.getLong(prefsKey, 0L)
-
-                // then add it to the logs :D
-                data += "\n${application.getString(
-                    R.string.crash_handler_previous_crash,
-                    Date(lastCrash).toString()
-                )}"
+                previousCrash = prefs.getLong(prefsKey, 0L)
 
                 // if a crash already happened just before it means the Error Activity crashed lul
-                if (lastCrash >= now - 1000) {
+                if (previousCrash >= now - 1000) {
                     // log it :D
                     Log.e(
                         TAG,
@@ -239,22 +243,23 @@ class CrashHandler private constructor(
                 }
 
                 // update the store
-                prefs.edit().putLong(prefsKey, now).commit()
+                prefs.edit(true) { putLong(prefsKey, now) }
             }
 
             Log.i(TAG, "Collecting Error")
 
-            // get Thread name and ID
-            data += "\n\n${application.getString(
-                R.string.crash_handler_thread_infos,
-                paramThread.name,
-                paramThread.id
-            )}"
+            val data = this.buildData(
+                now,
+                previousCrash,
+                paramThread,
+                paramThrowable
+            )
 
-            // print exception backtrace
-            data += "\n\n${application.getString(R.string.crash_handler_error)}\n${paramThrowable.stackTraceToString()}\n\n"
-
-            data += suffix ?: ""
+            try {
+                exportData(data, now)
+            } catch (e: IOException) {
+                Log.e(TAG, "Could not export the data to file", e)
+            }
 
             Log.i(TAG, "Starting ${activity.name}")
 
@@ -278,7 +283,127 @@ class CrashHandler private constructor(
 
             // Kill self
             Process.killProcess(Process.myPid())
-            exitProcess(10)
         }
+    }
+
+    fun export(): ByteArray? {
+        if (exportFolder == null) {
+            return null
+        }
+        val output = ZipFile()
+        val files = exportFolder.listFiles()
+        for (file in files!!) {
+            output.addFile(file.name, file)
+        }
+        return output.toByteArray()
+    }
+
+    fun clearExports() {
+        if (exportFolder == null) {
+            return
+        }
+        val files = exportFolder.listFiles()
+        for (file in files!!) {
+            file.delete()
+        }
+    }
+
+    private fun exportData(data: String, now: Long) {
+        if (exportFolder == null) {
+            return
+        }
+        @SuppressLint("SimpleDateFormat")
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss.SSS")
+        sdf.timeZone = TimeZone.getTimeZone("CET")
+        val filename = sdf.format(Date(now))
+        if (!exportFolder.exists()) {
+            exportFolder.mkdirs()
+        }
+        if (!exportFolder.isDirectory) {
+            Log.e(
+                "CrashHandler",
+                "Cannot export the crash logs to a file due to the folder not being a folder"
+            )
+            return
+        }
+        val out = File(exportFolder, "$filename.log")
+        out.writeText(data, Charsets.UTF_8)
+        Log.d("CrashHandler", "Saving file to ${out.absolutePath}")
+    }
+
+    /**
+     * build the data text
+     * @param now the date as of right now
+     * @param previousCrash the previous crash date
+     * @param thread the thread that crashed
+     * @param throwable the exception thrown
+     *
+     * @return the string that contains a nicely formatted list of informations about the device
+     */
+    private fun buildData(
+        now: Long,
+        previousCrash: Long?,
+        thread: Thread,
+        throwable: Throwable
+    ): String {
+        val app = application
+
+        if (app == null) {
+            return "Could not build data because the library is missing the context"
+        }
+
+        // prepare to build debug string
+        var data = "${app.getString(R.string.crash_handler_crash_report)}\n\n"
+
+        // add the user submitted prefix
+        data += prefix ?: ""
+
+        // add device informations
+        val deviceToReport =
+            if (Build.DEVICE.contains(Build.MANUFACTURER)) {
+                Build.DEVICE
+            } else {
+                "${Build.MANUFACTURER} ${Build.DEVICE}"
+            }
+
+        // add the device informations
+        data += "\n\n${app.getString(
+            R.string.crash_handler_hard_soft_infos,
+            deviceToReport,
+            Build.MODEL,
+            Build.VERSION.RELEASE,
+            Build.VERSION.SDK_INT
+        )}"
+
+        // add the current time to it
+        data += "\n\n${app.getString(
+            R.string.crash_handler_crash_happened,
+            Date(now).toString()
+        )}"
+
+        // add the previous crash date if available
+        if (previousCrash != null) {
+            data += "\n${app.getString(
+                R.string.crash_handler_previous_crash,
+                Date(previousCrash).toString()
+            )}"
+        }
+
+        // get Thread name and ID
+        data += "\n\n${app.getString(
+            R.string.crash_handler_thread_infos,
+            thread.name,
+            thread.id
+        )}"
+
+        // print exception backtrace
+        data += "\n\n${app.getString(R.string.crash_handler_error)}\n${throwable.stackTraceToString()}\n\n"
+
+        data += "Generated by Dzeio Crash Handler Version ${BuildConfig.VERSION}\n\n"
+
+        // add the user submitted suffix
+        data += suffix ?: ""
+
+        return data
     }
 }
