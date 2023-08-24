@@ -10,4 +10,7 @@
     <string name="no_email_client_found">No E-Mail client found!</string>
     <string name="send_email_report">Send a Report E-Mail</string>
     <string name="error_report_application_crash">Error report for the application crash</string>
+    <string name="export_logs">Export saved crash logs</string>
+    <string name="export_complete">Exported crash logs!</string>
+    <string name="clear_export_logs">Cleanup saved crash logs</string>
 </resources>
