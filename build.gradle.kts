@@ -15,6 +15,10 @@ plugins {
     id("com.android.application") version "8.1.1" apply false
     id("com.android.library") version "8.1.1" apply false
     id("org.jetbrains.kotlin.android") version "1.7.0" apply false
+
+    // Apply the java-library plugin for API and implementation separation.
+    `java-library`
+    `maven-publish`
 }
 
 // from: https://discuss.kotlinlang.org/t/use-git-hash-as-version-number-in-build-gradle-kts/19818/8
