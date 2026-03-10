@@ -44,19 +44,22 @@ val branch = "git rev-parse --abbrev-ref HEAD".runCommand(workingDir = rootDir)
 val tag = "git tag -l --points-at HEAD".runCommand(workingDir = rootDir)
 val commitId = "git rev-parse HEAD".runCommand(workingDir = rootDir)
 
-val finalVersion = System.getenv("version") ?: tag.drop(1) ?: "1.0.0"
+version = System.getenv("version") ?: tag.drop(1).ifEmpty {
+    branch
+}
+
+val finalVersion = version
 val finalGroup = System.getenv("group") ?: "com.dzeio"
 val artifact = System.getenv("artifact") ?: "crashhandler"
 
 group = finalGroup
-version = finalVersion
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = finalGroup
             artifactId = artifact
-            version = finalVersion
+            version = finalVersion as String
 
             from(components["java"])
 
