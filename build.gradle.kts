@@ -61,8 +61,8 @@ publishing {
             from(components["java"])
 
             pom {
-                name.set("TCGdex SDK")
-                description.set("Communicate with the Open Source TCGdex API in Kotlin/Java using the SDK")
+                name.set("Crash Handler")
+                description.set("Library that help handling crashes")
                 url.set("https://github.com/dzeiocom/crashhandler")
                 licenses {
                     license {
@@ -96,7 +96,7 @@ publishing {
     }
 }
 
-task("clean") {
-    delete(rootProject.buildDir)
-    delete(project.buildDir)
-}
+//task("clean") {
+//    delete(rootProject.buildDir)
+//    delete(project.buildDir)
+//}
